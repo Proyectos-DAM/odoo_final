@@ -77,3 +77,4 @@ Adrián - Proyecto DAM @ ILERNA
 ---
 
 *Si encuentras algún bug o tienes sugerencias, ¡dímelo! Esto es un proyecto de aprendizaje y cualquier feedback es bienvenido.* 🚀
+
