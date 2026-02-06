@@ -59,6 +59,16 @@ class Sesion(models.Model):
             else:
                 sesion.color = 10  # Verde - Disponible
     
+    @api.onchange('alumno_ids')
+    def _onchange_alumno_ids(self):
+        """Aviso inmediato al usuario cuando se superan los asientos"""
+        if self.num_asientos > 0 and len(self.alumno_ids) > self.num_asientos:
+            raise ValidationError(
+                f'No hay suficientes asientos disponibles. '
+                f'La sesión "{self.name}" tiene {self.num_asientos} asientos '
+                f'pero se intentan inscribir {len(self.alumno_ids)} alumnos.'
+            )
+
     @api.constrains('alumno_ids', 'num_asientos')
     def _check_asientos_disponibles(self):
         """Asegura que el número de alumnos inscritos no supere el número de asientos"""
