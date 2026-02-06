@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- CURSO -->
+    <record id="view_edu_curso_tree" model="ir.ui.view">
+        <field name="name">edu.curso.tree</field>
+        <field name="model">edu.curso</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="nivel"/>
+                <field name="precio"/>
+                <field name="profesor_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_edu_curso_form" model="ir.ui.view">
+        <field name="name">edu.curso.form</field>
+        <field name="model">edu.curso</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="nivel"/>
+                        <field name="precio"/>
+                        <field name="profesor_id"/>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                    <notebook>
+                        <page string="Sesiones">
+                            <field name="sesion_ids"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_edu_curso" model="ir.actions.act_window">
+        <field name="name">Cursos</field>
+        <field name="res_model">edu.curso</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- SESION -->
+    <record id="view_edu_sesion_tree" model="ir.ui.view">
+        <field name="name">edu.sesion.tree</field>
+        <field name="model">edu.sesion</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="porcentaje_ocupacion >= 100" 
+                  decoration-warning="porcentaje_ocupacion >= 50 and porcentaje_ocupacion &lt; 100"
+                  decoration-success="porcentaje_ocupacion &lt; 50">
+                <field name="name"/>
+                <field name="curso_id"/>
+                <field name="profesor_id"/>
+                <field name="fecha_inicio"/>
+                <field name="hora_inicio" widget="float_time"/>
+                <field name="duracion"/>
+                <field name="asientos_ocupados"/>
+                <field name="num_asientos"/>
+                <field name="porcentaje_ocupacion" widget="progressbar" options="{'max_value': 100}"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_edu_sesion_form" model="ir.ui.view">
+        <field name="name">edu.sesion.form</field>
+        <field name="model">edu.sesion</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Información General">
+                            <field name="curso_id"/>
+                            <field name="profesor_id"/>
+                            <field name="fecha_inicio"/>
+                            <field name="hora_inicio" widget="float_time"/>
+                            <field name="duracion"/>
+                        </group>
+                        <group string="Ocupación">
+                            <field name="num_asientos"/>
+                            <field name="asientos_ocupados"/>
+                            <field name="porcentaje_ocupacion" widget="progressbar" options="{'max_value': 100}"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Alumnos Matriculados">
+                            <field name="alumno_ids">
+                                <list>
+                                    <field name="nombre"/>
+                                    <field name="apellidos"/>
+                                    <field name="email"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_edu_sesion" model="ir.actions.act_window">
+        <field name="name">Sesiones</field>
+        <field name="res_model">edu.sesion</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ALUMNO -->
+    <record id="view_edu_alumno_tree" model="ir.ui.view">
+        <field name="name">edu.alumno.tree</field>
+        <field name="model">edu.alumno</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="nombre"/>
+                <field name="apellidos"/>
+                <field name="email"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_edu_alumno_form" model="ir.ui.view">
+        <field name="name">edu.alumno.form</field>
+        <field name="model">edu.alumno</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="nombre"/>
+                        <field name="apellidos"/>
+                        <field name="email"/>
+                        <field name="partner_id"/>
+                    </group>
+                    <notebook>
+                        <page string="Clases">
+                            <field name="clase_ids"/>
+                        </page>
+                        <page string="Facturas">
+                            <field name="facturacion_ids"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_edu_alumno" model="ir.actions.act_window">
+        <field name="name">Alumnos</field>
+        <field name="res_model">edu.alumno</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- CLASE -->
+    <record id="view_edu_clase_tree" model="ir.ui.view">
+        <field name="name">edu.clase.tree</field>
+        <field name="model">edu.clase</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="curso_id"/>
+                <field name="profesor_id"/>
+                <field name="horario"/>
+                <field name="aula"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_edu_clase_form" model="ir.ui.view">
+        <field name="name">edu.clase.form</field>
+        <field name="model">edu.clase</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="curso_id"/>
+                        <field name="profesor_id"/>
+                        <field name="horario"/>
+                        <field name="aula"/>
+                    </group>
+                    <notebook>
+                        <page string="Alumnos">
+                            <field name="alumno_ids"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_edu_clase" model="ir.actions.act_window">
+        <field name="name">Clases</field>
+        <field name="res_model">edu.clase</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- FACTURACION -->
+    <record id="view_edu_facturacion_tree" model="ir.ui.view">
+        <field name="name">edu.facturacion.tree</field>
+        <field name="model">edu.facturacion</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="alumno_id"/>
+                <field name="concepto"/>
+                <field name="cantidad"/>
+                <field name="fecha_pago"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_edu_facturacion_form" model="ir.ui.view">
+        <field name="name">edu.facturacion.form</field>
+        <field name="model">edu.facturacion</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="alumno_id"/>
+                        <field name="concepto"/>
+                        <field name="cantidad"/>
+                        <field name="fecha_pago"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_edu_facturacion" model="ir.actions.act_window">
+        <field name="name">Facturación</field>
+        <field name="res_model">edu.facturacion</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- PROFESOR -->
+    <record id="view_edu_profesor_tree" model="ir.ui.view">
+        <field name="name">edu.profesor.tree</field>
+        <field name="model">edu.profesor</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="titulacion"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_edu_profesor_form" model="ir.ui.view">
+        <field name="name">edu.profesor.form</field>
+        <field name="model">edu.profesor</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="titulacion"/>
+                        <field name="partner_id"/>
+                    </group>
+                    <notebook>
+                        <page string="Cursos">
+                            <field name="curso_ids"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_edu_profesor" model="ir.actions.act_window">
+        <field name="name">Profesores</field>
+        <field name="res_model">edu.profesor</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- MATRICULA -->
+    <record id="view_edu_matricula_tree" model="ir.ui.view">
+        <field name="name">edu.matricula.tree</field>
+        <field name="model">edu.matricula</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state == 'borrador'"
+                  decoration-info="state == 'confirmada'"
+                  decoration-success="state == 'pagada'">
+                <field name="name"/>
+                <field name="alumno_id"/>
+                <field name="sesion_id"/>
+                <field name="curso_id"/>
+                <field name="fecha_matricula"/>
+                <field name="importe"/>
+                <field name="state" widget="badge" 
+                       decoration-muted="state == 'borrador'"
+                       decoration-info="state == 'confirmada'"
+                       decoration-success="state == 'pagada'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_edu_matricula_form" model="ir.ui.view">
+        <field name="name">edu.matricula.form</field>
+        <field name="model">edu.matricula</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_confirmar" 
+                            string="Confirmar" 
+                            type="object" 
+                            class="btn-primary"
+                            invisible="state != 'borrador'"/>
+                    <button name="action_pagar" 
+                            string="Registrar Pago" 
+                            type="object" 
+                            class="btn-primary"
+                            invisible="state != 'confirmada'"/>
+                    <button name="action_cancelar" 
+                            string="Cancelar" 
+                            type="object"
+                            invisible="state == 'pagada'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="borrador,confirmada,pagada"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Datos de Matrícula">
+                            <field name="alumno_id"/>
+                            <field name="sesion_id"/>
+                            <field name="curso_id"/>
+                            <field name="fecha_matricula"/>
+                        </group>
+                        <group string="Información de Pago">
+                            <field name="importe"/>
+                            <field name="fecha_confirmacion"/>
+                            <field name="fecha_pago"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="notas" placeholder="Notas adicionales..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_edu_matricula" model="ir.actions.act_window">
+        <field name="name">Matrículas</field>
+        <field name="res_model">edu.matricula</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- MENÚS -->
+    <menuitem id="menu_edu_root" name="EduOdoo" sequence="100"/>
+    
+    <menuitem id="menu_edu_curso" name="Cursos" parent="menu_edu_root" action="action_edu_curso" sequence="10"/>
+    <menuitem id="menu_edu_sesion" name="Sesiones" parent="menu_edu_root" action="action_edu_sesion" sequence="20"/>
+    <menuitem id="menu_edu_clase" name="Clases" parent="menu_edu_root" action="action_edu_clase" sequence="30"/>
+    <menuitem id="menu_edu_alumno" name="Alumnos" parent="menu_edu_root" action="action_edu_alumno" sequence="40"/>
+    <menuitem id="menu_edu_profesor" name="Profesores" parent="menu_edu_root" action="action_edu_profesor" sequence="50"/>
+    <menuitem id="menu_edu_matricula" name="Matrículas" parent="menu_edu_root" action="action_edu_matricula" sequence="55"/>
+    <menuitem id="menu_edu_facturacion" name="Facturación" parent="menu_edu_root" action="action_edu_facturacion" sequence="60"/>
+
+</odoo>

@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_edu_curso,edu.curso,model_edu_curso,base.group_user,1,1,1,1
+access_edu_sesion,edu.sesion,model_edu_sesion,base.group_user,1,1,1,1
+access_edu_alumno,edu.alumno,model_edu_alumno,base.group_user,1,1,1,1
+access_edu_clase,edu.clase,model_edu_clase,base.group_user,1,1,1,1
+access_edu_facturacion,edu.facturacion,model_edu_facturacion,base.group_user,1,1,1,1
+access_edu_profesor,edu.profesor,model_edu_profesor,base.group_user,1,1,1,1
+access_edu_matricula,edu.matricula,model_edu_matricula,base.group_user,1,1,1,1
