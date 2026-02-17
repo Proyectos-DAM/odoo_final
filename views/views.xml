@@ -57,7 +57,6 @@
                 <field name="curso_id"/>
                 <field name="profesor_id"/>
                 <field name="fecha_inicio"/>
-                <field name="hora_inicio" widget="float_time"/>
                 <field name="duracion"/>
                 <field name="asientos_ocupados"/>
                 <field name="num_asientos"/>
@@ -80,7 +79,7 @@
                             <field name="curso_id"/>
                             <field name="profesor_id"/>
                             <field name="fecha_inicio"/>
-                            <field name="hora_inicio" widget="float_time"/>
+                            <field name="fecha_fin"/>
                             <field name="duracion"/>
                         </group>
                         <group string="Ocupación">
@@ -108,7 +107,46 @@
     <record id="action_edu_sesion" model="ir.actions.act_window">
         <field name="name">Sesiones</field>
         <field name="res_model">edu.sesion</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">list,form,calendar,kanban</field>
+    </record>
+
+     <!-- Vista calendario de sesiones -->
+    <record id="view_edu_sesion_calendar" model="ir.ui.view">
+        <field name="name">edu.sesion.calendar</field>
+        <field name="model">edu.sesion</field>
+        <field name="arch" type="xml">
+            <calendar string="Sesiones" date_start="fecha_inicio" date_stop="fecha_fin" color="curso_id" event_open_popup="true" quick_create="false">
+                <field name="name"/>
+                <field name="profesor_id"/>
+                <field name="curso_id"/>
+                <field name="num_asientos"/>
+                <field name="asientos_ocupados"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Vista Kanban de Sesiones -->
+    <record id="view_edu_sesion_kanban" model="ir.ui.view">
+        <field name="name">edu.sesion.kanban</field>
+        <field name="model">edu.sesion</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="curso_id">
+                <templates>
+                    <t t-name="card">
+                        <field name="color" widget="color_picker" invisible="1"/>
+                        <div class="oe_kanban_content">
+                            <strong><field name="name"/></strong>
+                            <div><field name="profesor_id"/></div>
+                            <div><field name="fecha_inicio"/></div>
+                            <div>
+                                <field name="porcentaje_ocupacion" widget="progressbar" options="{'max_value': 100}"/>
+                            </div>
+                            <div><field name="asientos_ocupados"/>/<field name="num_asientos"/> asientos</div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
     </record>
 
     <!-- ALUMNO -->

@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
+from datetime import timedelta
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 
 
 class Sesion(models.Model):
-    """Modelo Sesión"""
     _name = 'edu.sesion'
     _description = 'Sesión'
 
     name = fields.Char(string='Nombre', required=True)
-    fecha_inicio = fields.Date(string='Fecha de Inicio')
-    hora_inicio = fields.Float(string='Hora de Inicio', help='Hora en formato decimal (ej: 14.5 = 14:30)')
+    fecha_inicio = fields.Datetime(string='Fecha de Inicio')
+    fecha_fin = fields.Datetime(string='Fecha Fin', compute='_compute_fecha_fin', store=True)
     duracion = fields.Float(string='Duración (horas)')
     num_asientos = fields.Integer(string='Número de Asientos')
     
@@ -34,9 +34,16 @@ class Sesion(models.Model):
     )
     color = fields.Integer(string='Color', compute='_compute_color')
     
+    @api.depends('fecha_inicio', 'duracion')
+    def _compute_fecha_fin(self):
+        for sesion in self:
+            if sesion.fecha_inicio and sesion.duracion:
+                sesion.fecha_fin = sesion.fecha_inicio + timedelta(hours=sesion.duracion)
+            else:
+                sesion.fecha_fin = sesion.fecha_inicio
+
     @api.depends('alumno_ids', 'num_asientos')
     def _compute_ocupacion(self):
-        """Calcula el porcentaje de ocupación de la sesión"""
         for sesion in self:
             sesion.asientos_ocupados = len(sesion.alumno_ids)
             if sesion.num_asientos > 0:
@@ -46,11 +53,6 @@ class Sesion(models.Model):
     
     @api.depends('porcentaje_ocupacion')
     def _compute_color(self):
-        """Cambia el color según el nivel de ocupación:
-        - Verde (10): < 50% ocupación
-        - Amarillo (3): 50-99% ocupación  
-        - Rojo (1): 100% llena
-        """
         for sesion in self:
             if sesion.porcentaje_ocupacion >= 100:
                 sesion.color = 1  # Rojo - Llena
@@ -61,7 +63,6 @@ class Sesion(models.Model):
     
     @api.onchange('alumno_ids')
     def _onchange_alumno_ids(self):
-        """Aviso inmediato al usuario cuando se superan los asientos"""
         if self.num_asientos > 0 and len(self.alumno_ids) > self.num_asientos:
             raise ValidationError(
                 f'No hay suficientes asientos disponibles. '
@@ -71,7 +72,6 @@ class Sesion(models.Model):
 
     @api.constrains('alumno_ids', 'num_asientos')
     def _check_asientos_disponibles(self):
-        """Asegura que el número de alumnos inscritos no supere el número de asientos"""
         for sesion in self:
             if sesion.num_asientos > 0 and len(sesion.alumno_ids) > sesion.num_asientos:
                 raise ValidationError(
@@ -80,32 +80,29 @@ class Sesion(models.Model):
                     f'pero se intentan inscribir {len(sesion.alumno_ids)} alumnos.'
                 )
     
-    @api.constrains('profesor_id', 'fecha_inicio', 'hora_inicio', 'duracion')
+    @api.constrains('profesor_id', 'fecha_inicio', 'duracion')
     def _check_profesor_disponible(self):
-        """No permite que un profesor dé dos sesiones a la misma hora"""
         for sesion in self:
             if not sesion.profesor_id or not sesion.fecha_inicio:
                 continue
             
-            # Buscar otras sesiones del mismo profesor en la misma fecha
+            # Buscar otras sesiones del mismo profesor
             domain = [
                 ('id', '!=', sesion.id),
                 ('profesor_id', '=', sesion.profesor_id.id),
-                ('fecha_inicio', '=', sesion.fecha_inicio),
             ]
             otras_sesiones = self.search(domain)
             
             for otra in otras_sesiones:
-                # Verificar solapamiento de horarios
-                inicio_actual = sesion.hora_inicio
-                fin_actual = sesion.hora_inicio + sesion.duracion
-                inicio_otra = otra.hora_inicio
-                fin_otra = otra.hora_inicio + otra.duracion
+                if not otra.fecha_inicio:
+                    continue
+                # Verificar solapamiento usando fecha_inicio y fecha_fin
+                fin_actual = sesion.fecha_inicio + timedelta(hours=sesion.duracion)
+                fin_otra = otra.fecha_inicio + timedelta(hours=otra.duracion)
                 
                 # Hay solapamiento si los rangos se intersectan
-                if inicio_actual < fin_otra and fin_actual > inicio_otra:
+                if sesion.fecha_inicio < fin_otra and fin_actual > otra.fecha_inicio:
                     raise ValidationError(
                         f'El profesor "{sesion.profesor_id.name}" ya tiene asignada '
-                        f'la sesión "{otra.name}" el mismo día ({sesion.fecha_inicio}) '
-                        f'en un horario que se solapa.'
+                        f'la sesión "{otra.name}" en un horario que se solapa.'
                     )
